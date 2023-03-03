@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "check-filenames"
-description = "Check that filenames don't contain spaces."
+description = "Filename linters"
 authors = [
   {email = "mcflugen@gmail.com"},
   {name = "Eric Hutton"}
@@ -14,18 +14,18 @@ maintainers = [
   {name = "Eric Hutton"}
 ]
 keywords = [
+  "lint",
+  "pre-commit",
 ]
 license = {file = "LICENSE.rst"}
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Intended Audience :: Science/Research",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Cython",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: Implementation :: CPython",
-  "Topic :: Scientific/Engineering :: Physics",
 ]
 requires-python = ">=3.11"
 dependencies = [
@@ -50,7 +50,7 @@ dynamic = ["readme", "version"]
 [tool]
 
   [tool.setuptools.dynamic]
-  readme = {file = ["README.rst", "AUTHORS.rst"]}
+  readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
   version = {attr = "check_filenames._version.__version__"}
 
   [tool.pytest.ini_options]
