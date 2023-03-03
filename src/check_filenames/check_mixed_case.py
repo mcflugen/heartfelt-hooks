@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import re
 import sys
 from pathlib import Path
@@ -54,10 +55,18 @@ def check_mixed_case(silent, verbose, file, files) -> None:
             error_count += 1
             print(Text(str(filepath), style="bold"))
 
-    logger.info(f"checked {len(files)} filename{'s' if len(files) else ''}")
-    if error_count:
-        logger.info(f"found {error_count} bad filename{'s' if error_count else ''}")
+            if verbose:
+                logger.warning(filepath)
+
+    summary = os.linesep.join([
+        "Summary:",
+        f"checked {len(files)} filename{'s' if len(files)!=1 else ''}",
+        f"found {error_count} bad filename{'s' if error_count!=1 else ''}",
+    ]
+    )
+    if error_count and verbose:
+        logger.warning(summary)
     else:
-        logger.info(f"all files passed")
+        logger.info(summary)
 
     sys.exit(error_count)

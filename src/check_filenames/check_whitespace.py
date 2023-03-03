@@ -52,13 +52,20 @@ def check_whitespace(silent, verbose, file, files) -> None:
         text = Text(filepath.name)
         if text.highlight_regex(r"\s+", style="white on red"):
             error_count += 1
-            print(str(filepath.parent) + os.sep, end="")
-            print(text)
+            print(Text(str(filepath.parent) + os.sep) + text)
 
-    logger.info(f"checked {len(files)} filename{'s' if len(files) else ''}")
-    if error_count:
-        logger.info(f"found {error_count} bad filename{'s' if error_count else ''}")
+            if verbose:
+                logger.warning(filepath)
+
+    summary = os.linesep.join([
+        "Summary:",
+        f"checked {len(files)} filename{'s' if len(files)!=1 else ''}",
+        f"found {error_count} bad filename{'s' if error_count!=1 else ''}",
+    ]
+    )
+    if error_count and verbose:
+        logger.warning(summary)
     else:
-        logger.info(f"all files passed")
+        logger.info(summary)
 
     sys.exit(error_count)
