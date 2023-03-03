@@ -1,0 +1,5 @@
+-   id: check-filenames
+    name: check filenames for whitespace
+    description: checks that filenames do not contain whitespace.
+    entry: check-filenames
+    language: python
