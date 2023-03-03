@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -9,12 +10,13 @@ from typing import Sequence
 
 from rich.text import Text
 from rich import print
+
 import rich_click as click
 
 from ._logging import LoggingHandler
 
 
-logger = logging.getLogger("check-mixed-case")
+logger = logging.getLogger("check-whitespace")
 logger.addHandler(LoggingHandler())
 
 
@@ -33,8 +35,7 @@ logger.addHandler(LoggingHandler())
     "--file", help="Read files names from a file.", type=click.File("r")
 )
 @click.argument('files', nargs=-1, type=click.Path(exists=True))
-def check_mixed_case(silent, verbose, file, files) -> int:
-
+def check_whitespace(silent, verbose, file, files) -> int:
     if verbose:
         logger.setLevel(logging.INFO if verbose == 1 else logging.DEBUG)
     if silent:
@@ -47,11 +48,11 @@ def check_mixed_case(silent, verbose, file, files) -> int:
     for filepath in (Path(f) for f in files):
         logger.info(f"checking: {filepath}")
 
-        stem = filepath.stem
-
-        if stem != stem.upper() and stem != stem.lower():
+        text = Text(filepath.name)
+        if text.highlight_regex(r"\s+", style="white on red"):
             error_count += 1
-            print(Text(str(filepath), style="bold"))
+            print(str(filepath.parent) + os.sep, end="")
+            print(text)
 
     logger.info(f"checked {len(files)} filename{'s' if len(files) else ''}")
     if error_count:

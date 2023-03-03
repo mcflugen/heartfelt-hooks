@@ -30,6 +30,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   "rich",
+  "rich_click",
 ]
 dynamic = ["readme", "version"]
 
@@ -43,8 +44,8 @@ dynamic = ["readme", "version"]
   dev = ["nox", "devtools"]
 
   [project.scripts]
-  check-filenames = "check_filenames.check_filenames:main"
-  check-mixed-case = "check_filenames.check_mixed_case:main"
+  check-whitespace = "check_filenames.check_whitespace:check_whitespace"
+  check-mixed-case = "check_filenames.check_mixed_case:check_mixed_case"
 
 [tool]
 
