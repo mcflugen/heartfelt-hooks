@@ -44,6 +44,7 @@ dynamic = ["readme", "version"]
 
   [project.scripts]
   check-filenames = "check_filenames.check_filenames:main"
+  check-mixed-case = "check_filenames.check_mixed_case:main"
 
 [tool]
 

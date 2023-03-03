@@ -3,3 +3,8 @@
     description: checks that filenames do not contain whitespace.
     entry: check-filenames
     language: python
+-   id: check-mixed-case
+    name: check filenames for mixed case
+    description: checks that filenames do not upper and lower case letters.
+    entry: check-mixed-case
+    language: python
