@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 import re
+import sys
 from pathlib import Path
 from typing import Any
 from typing import Sequence
@@ -33,7 +34,7 @@ logger.addHandler(LoggingHandler())
     "--file", help="Read files names from a file.", type=click.File("r")
 )
 @click.argument('files', nargs=-1, type=click.Path(exists=True))
-def check_mixed_case(silent, verbose, file, files) -> int:
+def check_mixed_case(silent, verbose, file, files) -> None:
 
     if verbose:
         logger.setLevel(logging.INFO if verbose == 1 else logging.DEBUG)
@@ -59,8 +60,4 @@ def check_mixed_case(silent, verbose, file, files) -> int:
     else:
         logger.info(f"all files passed")
 
-    return error_count
-
-
-if __name__ == '__main__':
-    raise SystemExit(main())
+    sys.exit(error_count)
