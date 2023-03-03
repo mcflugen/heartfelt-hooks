@@ -2,9 +2,8 @@
 import contextlib
 import logging
 import sys
-from typing import Any, Generator
+from typing import Generator
 
-import click
 from rich import print
 from rich.text import Text
 
