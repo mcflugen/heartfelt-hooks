@@ -5,18 +5,20 @@ import sys
 from typing import Any, Generator
 
 import click
+from rich import print
+from rich.text import Text
 
 logger = logging.getLogger("rollcall")
 
-LOG_LEVEL_STYLES: dict[str, dict[str, Any]] = {
-    "DEBUG": {"bold": True, "dim": True},
-    "INFO": {"bold": True, "dim": True, "fg": "green"},
-    "WARNING": {"bold": True, "fg": "bright_yellow"},
-    "ERROR": {"bold": True, "fg": "bright_red"},
-    "CRITICAL": {"bold": True, "fg": "bright_red"},
+LOG_LEVEL_STYLES: dict[str, str] = {
+    "DEBUG": "bold dim",
+    "INFO": "bold dim green",
+    "WARNING": "magenta",
+    "ERROR": "bold red",
+    "CRITICAL": "bold red",
 }
 
-MULTILINE_STYLES: dict[str, Any] = {"dim": True, "italic": True}
+MULTILINE_STYLE = "dim italic"
 
 
 class LoggingHandler(logging.Handler):
@@ -30,17 +32,22 @@ class LoggingHandler(logging.Handler):
         record : LogRecord
             The log to print.
         """
-        level_msg = click.style(
-            f"[{record.levelname}]", **LOG_LEVEL_STYLES[record.levelname]
+        level_msg = Text(
+            f"[{record.levelname}]", style=LOG_LEVEL_STYLES[record.levelname]
         )
         lines = record.getMessage().splitlines()
         if len(lines) == 0:
             lines = [""]
-        print(f"{level_msg} {lines[0]}", file=sys.stderr)
+
+        print(level_msg, file=sys.stderr, end="")
+        if lines[0]:
+            print(f" {lines[0]}", file=sys.stderr)
+        else:
+            print("")
 
         if len(lines) > 1:
             for line in lines[1:]:
-                print(click.style(f"+ {line}", **MULTILINE_STYLES), file=sys.stderr)
+                print(Text(f"+ {line}", style="dim italic"), file=sys.stderr)
 
 
 @contextlib.contextmanager
