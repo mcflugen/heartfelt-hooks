@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "check-filenames"
+description = "Filename linters"
+authors = [
+  {email = "mcflugen@gmail.com"},
+  {name = "Eric Hutton"}
+]
+maintainers = [
+  {email = "mcflugen@gmail.com"},
+  {name = "Eric Hutton"}
+]
+keywords = [
+  "lint",
+  "pre-commit",
+]
+license = {file = "LICENSE.rst"}
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Cython",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+requires-python = ">=3.11"
+dependencies = [
+  "rich",
+  "rich_click",
+]
+dynamic = ["readme", "version"]
+
+  [project.urls]
+  homepage = "https://github.com/mcflugen/check-filenames"
+  documentation = "https://github.com/mcflugen/check-filenames"
+  repository = "https://github.com/mcflugen/check-filenames"
+  changelog = "https://github.com/mcflugen/check-filenames/blob/main/CHANGES.rst"
+
+  [project.optional-dependencies]
+  dev = ["nox", "devtools"]
+
+  [project.scripts]
+  check-whitespace = "check_filenames.check_whitespace:check_whitespace"
+  check-mixed-case = "check_filenames.check_mixed_case:check_mixed_case"
+
+[tool]
+
+  [tool.setuptools.dynamic]
+  readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
+  version = {attr = "check_filenames._version.__version__"}
+
+  [tool.pytest.ini_options]
+  minversion = "6.0"
+  testpaths = ["src", "tests"]
+  norecursedirs = [".*", "*.egg*", "build", "dist"]
+  addopts = """
+    --ignore setup.py
+    --tb native
+    --durations 16
+    --strict-markers
+    --doctest-modules
+    -vvv
+  """
+  doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "IGNORE_EXCEPTION_DETAIL",
+    "ALLOW_UNICODE"
+  ]
+
+  [tool.isort]
+  multi_line_output = 3
+  include_trailing_comma = true
+  force_grid_wrap = 0
+  combine_as_imports = true
+  line_length = 88
+
+  [tool.check-manifest]
+  ignore = [".nox", "build"]
