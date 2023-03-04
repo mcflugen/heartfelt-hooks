@@ -1,0 +1,5 @@
+include .pre-commit-config.yaml
+include .pre-commit-hooks.yaml
+include CHANGES.rst
+include noxfile.py
+include requirements-testing.in
