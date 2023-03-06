@@ -22,6 +22,7 @@
 -   id: insert-toc
     name: insert a table of contents into a notebook
     description: insert a table of contents into a notebook based on its headings
+    args: ['--in-place']
     entry: insert-toc
     language: python
     types: [jupyter]
