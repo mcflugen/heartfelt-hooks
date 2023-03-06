@@ -3,8 +3,8 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "check-filenames"
-description = "Filename linters"
+name = "heartfelt-hooks"
+description = "Some linters and pre-commit hooks"
 authors = [
   {email = "mcflugen@gmail.com"},
   {name = "Eric Hutton"}
@@ -29,29 +29,36 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
+  "mistletoe",
+  "nbformat",
   "rich",
   "rich_click",
 ]
 dynamic = ["readme", "version"]
 
   [project.urls]
-  homepage = "https://github.com/mcflugen/check-filenames"
-  documentation = "https://github.com/mcflugen/check-filenames"
-  repository = "https://github.com/mcflugen/check-filenames"
-  changelog = "https://github.com/mcflugen/check-filenames/blob/main/CHANGES.rst"
+  homepage = "https://github.com/mcflugen/heartfelt-hooks"
+  documentation = "https://github.com/mcflugen/heartfelt-hooks"
+  repository = "https://github.com/mcflugen/heartfelt-hooks"
+  changelog = "https://github.com/mcflugen/heartfelt-hooks/blob/main/CHANGES.rst"
 
   [project.optional-dependencies]
   dev = ["nox", "devtools"]
 
   [project.scripts]
-  check-whitespace = "check_filenames.check_whitespace:check_whitespace"
-  check-mixed-case = "check_filenames.check_mixed_case:check_mixed_case"
+  check-whitespace = "heartfelt_hooks.check_whitespace:check_whitespace"
+  check-mixed-case = "heartfelt_hooks.check_mixed_case:check_mixed_case"
+  check-snake-case = "heartfelt_hooks.check_snake_case:check_snake_case"
+  check-heading-levels = "heartfelt_hooks.check_heading_levels:check_heading_levels"
+  list-headings = "heartfelt_hooks.list_headings:list_headings"
+  insert-toc = "heartfelt_hooks.list_headings:insert_toc"
+  hide-solution-cells = "heartfelt_hooks.hide_solution_cells:hide_solution_cells"
 
 [tool]
 
   [tool.setuptools.dynamic]
   readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
-  version = {attr = "check_filenames._version.__version__"}
+  version = {attr = "heartfelt_hooks._version.__version__"}
 
   [tool.pytest.ini_options]
   minversion = "6.0"
