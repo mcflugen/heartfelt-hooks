@@ -29,6 +29,27 @@ def test(session: nox.Session) -> None:
         session.run("coverage", "report", "--ignore-errors", "--show-missing")
 
 
+@nox.session(name="test-cli")
+def test_cli(session: nox.Session) -> None:
+    """Test the command line interface."""
+    session.install(".")
+
+    commands = [
+        "check-whitespace",
+        "check-mixed-case",
+        "check-snake-case",
+        "check-heading-levels",
+        "list-headings",
+        "insert-toc",
+        "hide-solution-cells",
+    ]
+
+    for command in commands:
+        session.run(command, "--help", silent=True)
+        session.run(command, "--version", silent=True)
+        session.run(command)
+
+
 @nox.session
 def lint(session: nox.Session) -> None:
     """Look for lint."""
