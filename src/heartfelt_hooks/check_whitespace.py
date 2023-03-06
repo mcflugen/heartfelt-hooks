@@ -9,13 +9,9 @@ import rich_click as click
 from rich import print
 from rich.text import Text
 
-from ._logging import LoggingHandler
-
-logger = logging.getLogger("check-whitespace")
-logger.addHandler(LoggingHandler())
+from ._logging import VERBOSITY, logger
 
 
-@click.command()
 @click.version_option()
 @click.option(
     "-s",
@@ -24,13 +20,12 @@ logger.addHandler(LoggingHandler())
     help="Suppress status status messages, including the progress bar.",
 )
 @click.option(
-    "-v", "--verbose", is_flag=True, help="Also emit status messages to stderr."
+    "-v", "--verbose", count=True, help="Also emit status messages to stderr."
 )
 @click.option("--file", help="Read files names from a file.", type=click.File("r"))
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
 def check_whitespace(silent, verbose, file, files) -> None:
-    if verbose:
-        logger.setLevel(logging.INFO if verbose == 1 else logging.DEBUG)
+    logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
     if silent:
         logger.setLevel(logging.ERROR)
 

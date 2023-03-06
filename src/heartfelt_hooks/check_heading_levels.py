@@ -14,10 +14,7 @@ import rich_click as click
 from rich import print
 from rich.text import Text
 
-from ._logging import LoggingHandler, VERBOSITY
-
-logger = logging.getLogger("check-heading-levels")
-logger.addHandler(LoggingHandler())
+from ._logging import VERBOSITY, logger
 
 
 @click.command()

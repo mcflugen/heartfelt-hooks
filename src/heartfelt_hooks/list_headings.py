@@ -11,12 +11,8 @@ import rich_click as click
 from rich import print
 from rich.text import Text
 
-from ._logging import LoggingHandler, VERBOSITY
+from ._logging import VERBOSITY, logger
 from .check_heading_levels import NotebookHeadings
-
-
-logger = logging.getLogger("check-whitespace")
-logger.addHandler(LoggingHandler())
 
 
 class MissingTOCError(Exception):

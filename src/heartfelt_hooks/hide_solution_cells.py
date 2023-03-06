@@ -11,8 +11,8 @@ import rich_click as click
 from rich import print
 from rich.text import Text
 
-from ._logging import LoggingHandler, VERBOSITY
-
+# from ._logging import LoggingHandler, VERBOSITY
+from ._logging import VERBOSITY, logger
 
 HIDDEN_CODE_CELL_FORMAT = """
 <details>
@@ -23,10 +23,6 @@ HIDDEN_CODE_CELL_FORMAT = """
 ```
 </details>
 """.strip()
-
-
-logger = logging.getLogger("hide-cells")
-logger.addHandler(LoggingHandler())
 
 
 class Success:
@@ -72,7 +68,7 @@ class MissingTaggedCellError(Exception):
 @click.option("--tags-to-hide", multiple=True, help="Hide cells with this tag.")
 @click.option("--file", help="Read files names from a file.", type=click.File("r"))
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
-def hide_cells(silent, verbose, file, tags_to_hide, files) -> None:
+def hide_solution_cells(silent, verbose, file, tags_to_hide, files) -> None:
     logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
     if silent:
         logger.setLevel(logging.ERROR)
@@ -81,13 +77,16 @@ def hide_cells(silent, verbose, file, tags_to_hide, files) -> None:
         files += tuple(file.read().splitlines())
     tags_to_hide = set(tags_to_hide)
 
-    if not tags_to_hide:
+    if not tags_to_hide or not files:
+        logger.info("nothing to do")
         sys.exit(0)
 
     logger.info(
-        os.linesep.join([
-        "hiding code cells",
-        HIDDEN_CODE_CELL_FORMAT]
+        os.linesep.join(
+            [
+                f"hiding code cells with tags: {', '.join(tags_to_hide)}",
+                HIDDEN_CODE_CELL_FORMAT,
+            ]
         )
     )
     error_count = 0
@@ -112,6 +111,11 @@ def hide_cells(silent, verbose, file, tags_to_hide, files) -> None:
             error_count += 1
 
         nbformat.write(nb, sys.stdout)
+
+    if error_count:
+        logger.error("💔")
+    else:
+        logger.info("❤️")
 
     sys.exit(error_count)
 

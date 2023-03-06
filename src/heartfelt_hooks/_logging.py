@@ -7,7 +7,8 @@ from typing import Generator
 from rich import print
 from rich.text import Text
 
-logger = logging.getLogger("rollcall")
+VERBOSITY = {0: logging.ERROR, 1: logging.WARNING, 2: logging.INFO}
+
 
 LOG_LEVEL_STYLES: dict[str, str] = {
     "DEBUG": "bold dim",
@@ -59,3 +60,7 @@ def logging_handler() -> Generator[None, None, None]:
         yield
     finally:
         logger.removeHandler(handler)
+
+
+logger = logging.getLogger("heartfelt-hooks")
+logger.addHandler(LoggingHandler())
