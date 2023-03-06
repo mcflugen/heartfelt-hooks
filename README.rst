@@ -34,32 +34,36 @@ levels do not increase by more than one and do not drop lower than the first
 heading level in the notebook.
 
 Good:
-```markdown
-# Heading 1
 
-## Heading 1.1
-### Heading 1.1.1
+.. code-block:: markdown
 
-# Heading 2
-```
+  # Heading 1
 
-Bad:
-```markdown
-# Heading 1
+  ## Heading 1.1
+  ### Heading 1.1.1
 
-### Heading 1.1.1
+  # Heading 2
 
-# Heading 2
-```
+Bad (heading 1.1.1 indents two levels from heading 1):
 
-Also bad:
-```markdown
-## Heading 1
+.. code-block:: markdown
 
-### Heading 1.1
+  # Heading 1
 
-# Heading 2
-```
+  ### Heading 1.1.1
+
+  # Heading 2
+
+Also bad (heading 2 dedents below the anchor heading 1):
+
+.. code-block:: markdown
+
+  ## Heading 1
+
+  ### Heading 1.1
+
+  # Heading 2
+
 
 ``insert-toc``
 
