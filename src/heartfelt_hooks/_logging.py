@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import sys
-from typing import Generator
+from collections.abc import Generator
 
 from rich import print
 from rich.text import Text
