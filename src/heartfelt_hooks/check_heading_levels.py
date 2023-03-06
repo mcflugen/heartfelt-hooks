@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import sys
 from dataclasses import dataclass
 from itertools import pairwise
@@ -94,7 +93,7 @@ class NotebookHeadings:
         return self._nb
 
     def __iter__(self):
-        for cell, heading in self._headings:
+        for _, heading in self._headings:
             yield heading.level, heading.text
 
     def __str__(self):
@@ -221,18 +220,3 @@ class DedentValidator(NotebookHeadingValidator):
                 errors.append((first_heading, (cell, heading)))
         self._errors = errors
         return errors
-
-
-class NotebookIndentError:
-    def __init__(self, parent, child, filepath=None, cell=None):
-        self._parent = parent
-        self._child = child
-
-    def log(self):
-        return ":".join(
-            [
-                f"{filepath!s}",
-                f"level={prev.level}(cell={prev.cell})",
-                f"level={next.level}(cell={next.cell})",
-            ]
-        )

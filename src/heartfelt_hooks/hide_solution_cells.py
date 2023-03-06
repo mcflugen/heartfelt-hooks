@@ -2,16 +2,11 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import sys
-from pathlib import Path
 
 import nbformat
 import rich_click as click
-from rich import print
-from rich.text import Text
 
-# from ._logging import LoggingHandler, VERBOSITY
 from ._logging import VERBOSITY, logger
 
 HIDDEN_CODE_CELL_FORMAT = """
