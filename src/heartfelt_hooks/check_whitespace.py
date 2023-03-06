@@ -51,9 +51,12 @@ def check_whitespace(silent, verbose, file, files) -> None:
             f"found {error_count} bad filename{'s' if error_count!=1 else ''}",
         ]
     )
-    if error_count and verbose:
+
+    if error_count:
         logger.warning(summary)
+        logger.error("💔")
     else:
         logger.info(summary)
+        logger.info("❤️")
 
     sys.exit(error_count)

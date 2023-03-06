@@ -63,7 +63,6 @@ def list_headings(silent, verbose, file, files) -> None:
     if file:
         files += tuple(file.read().splitlines())
 
-    error_count = 0
     for filepath in (Path(f) for f in files):
         logger.info(f"checking: {filepath}")
 
@@ -71,9 +70,9 @@ def list_headings(silent, verbose, file, files) -> None:
 
         print(headings)
 
-    error_count = 0
+    logger.info("❤️")
 
-    sys.exit(error_count)
+    sys.exit(0)
 
 
 @click.command()
@@ -129,6 +128,11 @@ def insert_toc(silent, verbose, file, in_place, files) -> None:
                 nbformat.write(headings.nb, filepath)
         else:
             nbformat.write(headings.nb, sys.stdout)
+
+    if error_count:
+        logger.error("💔")
+    else:
+        logger.info("❤️")
 
     sys.exit(error_count)
 

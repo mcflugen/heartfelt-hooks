@@ -68,6 +68,11 @@ def check_heading_levels(
 
         error_count += validator.error_count
 
+    if error_count:
+        logger.error("💔")
+    else:
+        logger.info("❤️")
+
     sys.exit(error_count)
 
 
