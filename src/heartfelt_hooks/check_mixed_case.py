@@ -57,7 +57,7 @@ def check_mixed_case(silent, verbose, file, files) -> None:
         ]
     )
 
-    if error_count
+    if error_count:
         logger.warning(summary)
         logger.error("💔")
     else:

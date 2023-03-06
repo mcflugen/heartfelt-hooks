@@ -12,6 +12,7 @@ from rich.text import Text
 from ._logging import VERBOSITY, logger
 
 
+@click.command()
 @click.version_option()
 @click.option(
     "-s",
