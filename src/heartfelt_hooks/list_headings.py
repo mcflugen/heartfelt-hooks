@@ -64,7 +64,7 @@ def list_headings(silent, verbose, file, files) -> None:
     for filepath in (Path(f) for f in files):
         logger.info(f"checking: {filepath}")
 
-        headings = NotebookHeadings(filepath)
+        headings = NotebookHeadings(filepath, cells_to_ignore=["toc"])
 
         print(headings)
 
@@ -84,6 +84,11 @@ def list_headings(silent, verbose, file, files) -> None:
 @click.option(
     "-v", "--verbose", count=True, help="Also emit status messages to stderr."
 )
+@click.option(
+    "--allow-missing-toc",
+    is_flag=True,
+    help="Allow a notebook that does not have a cell tagged as a toc.",
+)
 @click.option("--file", help="Read files names from a file.", type=click.File("r"))
 @click.option(
     "--in-place",
@@ -91,7 +96,7 @@ def list_headings(silent, verbose, file, files) -> None:
     help="Overwrite the existing notebook",
 )
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
-def insert_toc(silent, verbose, file, in_place, files) -> None:
+def insert_toc(silent, verbose, allow_missing_toc, file, in_place, files) -> None:
     logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
     if silent:
         logger.setLevel(logging.ERROR)
@@ -101,17 +106,19 @@ def insert_toc(silent, verbose, file, in_place, files) -> None:
 
     error_count = 0
     for filepath in files:
-        logger.info(f"checking: {filepath}")
+        logger.info(f"checking: {filepath!s}")
 
-        headings = NotebookHeadings(filepath)
+        headings = NotebookHeadings(filepath, cells_to_ignore=["toc"])
 
         try:
             cell_no, cell = _insert_toc(headings.nb.cells, str(headings))
         except MissingTOCError as error:
             status = Failure(filepath, error=str(error))
-            success = False
+            success = False or allow_missing_toc
         else:
             status = Success(filepath, cell_no=cell_no, contents=cell["source"])
+            logger.info(f"min_level: {headings.min_level}")
+            logger.info(f"first_level: {headings.first_level}")
             success = True
 
         if success:
@@ -122,7 +129,7 @@ def insert_toc(silent, verbose, file, in_place, files) -> None:
 
         if in_place:
             if success:
-                logger.info("f{filepath!s}: overwriting")
+                logger.info(f"{filepath!s}: overwriting")
                 nbformat.write(headings.nb, filepath)
         else:
             nbformat.write(headings.nb, sys.stdout)

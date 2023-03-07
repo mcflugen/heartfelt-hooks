@@ -82,37 +82,52 @@ class Heading:
 
 
 class NotebookHeadings:
-    def __init__(self, filepath):
+    def __init__(self, filepath, cells_to_ignore=None):
         self._filepath = filepath
+        self._cells_to_ignore = cells_to_ignore
         self._nb = nbformat.read(filepath, as_version=4)
 
-        self._headings = self.extract(self._nb)
+        self._headings = self.extract(self._nb, cells_to_ignore=self._cells_to_ignore)
 
     @property
     def nb(self):
         return self._nb
+
+    @property
+    def first_level(self):
+        return self._headings[0][1].level
+
+    @property
+    def min_level(self):
+        return min(level for level, _ in self)
 
     def __iter__(self):
         for _, heading in self._headings:
             yield heading.level, heading.text
 
     def __str__(self):
+        min_level = self.min_level
         toc = []
         for level, text in self:
-            toc.append(f"{'  '*(level - 1)}* [{text}](#{text.replace(' ', '-')})")
+            toc.append(
+                f"{'  '*(level - min_level)}* [{text}](#{text.replace(' ', '-')})"
+            )
         return os.linesep.join(toc)
 
     @staticmethod
-    def extract(nb):
+    def extract(nb, cells_to_ignore=None):
+        cells_to_ignore = cells_to_ignore if cells_to_ignore else []
+
         headings = []
         for count, cell in enumerate(nb.cells):
-            if cell["cell_type"] == "markdown":
-                headings += [
-                    (count, heading)
-                    for heading in NotebookHeadings._extract_headings_from_source(
-                        cell["source"]
-                    )
-                ]
+            tags = set(cell.get("metadata", {}).get("tags", []))
+            if tags.isdisjoint(cells_to_ignore) and cell["cell_type"] == "markdown":
+                headings_in_cell = NotebookHeadings._extract_headings_from_source(
+                    cell["source"]
+                )
+
+                for h in headings_in_cell:
+                    headings.append((count, h))
 
         return headings
 
@@ -121,10 +136,11 @@ class NotebookHeadings:
         doc = mistletoe.Document(source)
 
         headings = []
-        for heading in [
-            h for h in doc.children if isinstance(h, mistletoe.block_token.Heading)
-        ]:
-            headings.append(Heading(level=heading.level, text=heading.content))
+        for child in doc.children:
+            if isinstance(child, mistletoe.block_token.Heading):
+                headings.append(
+                    Heading(level=child.level, text=child.children[0].content)
+                )
 
         return headings
 
