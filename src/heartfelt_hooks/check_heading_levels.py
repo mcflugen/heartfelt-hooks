@@ -109,7 +109,9 @@ class NotebookHeadings:
         min_level = self.min_level
         toc = []
         for level, text in self:
-            toc.append(f"{'  '*(level - min_level)}* [{text}](#{text.replace(' ', '-')})")
+            toc.append(
+                f"{'  '*(level - min_level)}* [{text}](#{text.replace(' ', '-')})"
+            )
         return os.linesep.join(toc)
 
     @staticmethod
@@ -120,7 +122,6 @@ class NotebookHeadings:
         for count, cell in enumerate(nb.cells):
             tags = set(cell.get("metadata", {}).get("tags", []))
             if tags.isdisjoint(cells_to_ignore) and cell["cell_type"] == "markdown":
-
                 headings_in_cell = NotebookHeadings._extract_headings_from_source(
                     cell["source"]
                 )
