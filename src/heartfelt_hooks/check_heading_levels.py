@@ -138,11 +138,18 @@ class NotebookHeadings:
         headings = []
         for child in doc.children:
             if isinstance(child, mistletoe.block_token.Heading):
-                headings.append(
-                    Heading(level=child.level, text=child.children[0].content)
-                )
+                headings.append(Heading(level=child.level, text=_get_content(child)))
 
         return headings
+
+
+def _get_content(token):
+    try:
+        child = token.children[0]
+    except (AttributeError, IndexError):
+        return token.content
+    else:
+        return _get_content(child)
 
 
 class NotebookHeadingValidator:
