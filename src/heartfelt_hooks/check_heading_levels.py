@@ -138,9 +138,7 @@ class NotebookHeadings:
         headings = []
         for child in doc.children:
             if isinstance(child, mistletoe.block_token.Heading):
-                headings.append(
-                    Heading(level=child.level, text=_get_content(child))
-                )
+                headings.append(Heading(level=child.level, text=_get_content(child)))
 
         return headings
 
