@@ -42,7 +42,6 @@ def test_cli(session: nox.Session) -> None:
         "nb-list-headings",
         "nb-insert-toc",
         "nb-check-hidden-cells",
-        "nb-hide-solution-cells",
         "nb-check-kernel",
         "nb-hide-cells",
     ]
