@@ -35,6 +35,9 @@ bold = partial(Text, style="bold")
 )
 @click.option("-W", "--warning-is-error", is_flag=True, help="Treat warnings as errors")
 @click.option("--kernel", help="The kernel spec as a json-formatted string.")
+@click.option("--kernel-name", help="Name of the kernel.")
+@click.option("--kernel-language", help="Language of the kernel.")
+@click.option("--kernel-display-name", help="Display name of the kernel.")
 @click.option("--fix", is_flag=True, help="Fix notebooks.")
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
 def nb_check_kernel(
@@ -42,6 +45,9 @@ def nb_check_kernel(
     verbose,
     warning_is_error,
     kernel,
+    kernel_name,
+    kernel_display_name,
+    kernel_language,
     fix,
     files,
 ) -> None:
@@ -53,6 +59,13 @@ def nb_check_kernel(
     files or logger.warning("no notebooks to check")
 
     kernel = json.loads(kernel) if kernel else {}
+    if kernel_name:
+        kernel["name"] = kernel_name
+    if kernel_language:
+        kernel["language"] = kernel_language
+    if kernel_display_name:
+        kernel["display_name"] = kernel_display_name
+
     # kernel = {
     #     "display_name": "CSDMS", "language": "python", "name": "csdms-2023"
     # }
