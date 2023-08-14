@@ -1,34 +1,48 @@
--   id: check-whitespace
+-   id: file-name-check-whitespace
     name: check filenames for whitespace
     description: checks that filenames do not contain whitespace.
-    entry: check-whitespace
+    entry: fn-check-whitespace
     language: python
--   id: check-mixed-case
+-   id: file-name-check-mixed-case
     name: check filenames for mixed case
     description: checks that filenames do not upper and lower case letters.
-    entry: check-mixed-case
+    entry: fn-check-mixed-case
     language: python
--   id: check-snake-case
+-   id: file-name-check-snake-case
     name: check filenames for mixed snake/sausage case
     description: checks that filenames that are a mixture of snake and sausage case.
-    entry: check-snake-case
+    entry: fn-check-snake-case
     language: python
--   id: check-heading-levels
+-   id: notebook-check-heading-levels
     name: check consistent heading levels
     description: check that heading levels do not increase by more that one.
-    entry: check-heading-levels
+    entry: nb-check-heading-levels
     language: python
     types: [jupyter]
--   id: insert-toc
+-   id: notebook-insert-toc
     name: insert a table of contents into a notebook
     description: insert a table of contents into a notebook based on its headings
-    args: ['--in-place']
-    entry: insert-toc
+    args: ['--in-place', '--allow-missing-toc']
+    entry: nb-insert-toc
     language: python
     types: [jupyter]
--   id: hide-solution-cells
+-   id: nb-hide-cells
     name: hide solution cells of a notebook
     description: hides the solution cells of a notebook in a <details> html tag
-    entry: hide-cells
+    entry: nb-hide-cells
+    language: python
+    args: [-v, --tags=solution]
+    types: [jupyter]
+-   id: nb-check-hidden-cells
+    name: check that problem notebooks are up-to-date
+    description: check that problem notebooks are in sync with their solution notebooks
+    entry: nb-check-hidden-cells
+    language: python
+    args: [-v, --silent, --tags=solution, --solution-suffix=.a.ipynb]
+    types: [jupyter]
+-   id: nb-check-kernel
+    name: check the notebook kernel
+    description: check a notebook's kernel specification
+    entry: nb-check-kernel
     language: python
     types: [jupyter]
