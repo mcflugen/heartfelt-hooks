@@ -35,13 +35,16 @@ def test_cli(session: nox.Session) -> None:
     session.install(".")
 
     commands = [
-        "check-whitespace",
-        "check-mixed-case",
-        "check-snake-case",
-        "check-heading-levels",
-        "list-headings",
-        "insert-toc",
-        "hide-solution-cells",
+        "fn-check-whitespace",
+        "fn-check-mixed-case",
+        "fn-check-snake-case",
+        "nb-check-heading-levels",
+        "nb-list-headings",
+        "nb-insert-toc",
+        "nb-check-hidden-cells",
+        "nb-hide-solution-cells",
+        "nb-check-kernel",
+        "nb-hide-cells",
     ]
 
     for command in commands:
