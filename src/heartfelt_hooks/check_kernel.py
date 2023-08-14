@@ -1,13 +1,10 @@
 from __future__ import annotations
-from difflib import unified_diff
-
 
 import json
 import logging
 import os
 import pathlib
 import sys
-import tomllib
 from functools import partial
 
 import nbformat
@@ -16,7 +13,7 @@ import yaml
 from rich import print
 from rich.text import Text
 
-from ._logging import VERBOSITY, handler, logger
+from ._logging import VERBOSITY, logger
 
 
 class NotebookLintError(Exception):
@@ -28,6 +25,7 @@ class NotebookLintError(Exception):
 
 
 bold = partial(Text, style="bold")
+
 
 @click.command()
 @click.version_option()
@@ -83,7 +81,6 @@ def nb_check_kernel(
 
 
 class NotebookLinter:
-
     def read(self, filepath):
         self._nb = nbformat.read(filepath, as_version=4)
 
@@ -116,15 +113,13 @@ class NotebookLintKernel(NotebookLinter):
 
         try:
             actual = nb["metadata"]["kernelspec"]
-        except KeyError:
-            raise NotebookLintError("notebook is missing a kernel spec")
+        except KeyError as error:
+            raise NotebookLintError("notebook is missing a kernel spec") from error
 
         for k, v in self._kernelspec.items():
             if actual[k] != v:
                 raise NotebookLintError(
-                    yaml.dump(
-                        {"actual": dict(actual), "expected": self._kernelspec}
-                    )
+                    yaml.dump({"actual": dict(actual), "expected": self._kernelspec})
                 )
 
     def fix(self, filepath, stream=None):

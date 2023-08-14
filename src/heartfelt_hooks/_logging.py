@@ -25,6 +25,7 @@ MULTILINE_STYLE = "dim italic"
 
 class LoggingHandler(logging.Handler):
     """Print heartfelt-hooks log messages."""
+
     count = defaultdict(int)
 
     def __init__(self, *args, **kwargs):

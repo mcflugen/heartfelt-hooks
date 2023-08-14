@@ -1,9 +1,6 @@
 from __future__ import annotations
-from difflib import unified_diff
-
 
 import logging
-import os
 import pathlib
 import sys
 from functools import partial
@@ -13,9 +10,8 @@ import rich_click as click
 from rich import print
 from rich.text import Text
 
-from ._logging import VERBOSITY, handler, logger
+from ._logging import VERBOSITY, logger
 from .hide_solution_cells import NotebookCellHider
-
 
 bold = partial(Text, style="bold")
 
@@ -102,8 +98,8 @@ def nb_check_hidden_cells(
 
 def _highlight_diff(text):
     from pygments import highlight
-    from pygments.lexers.diff import DiffLexer
     from pygments.formatters import TerminalFormatter
+    from pygments.lexers.diff import DiffLexer
 
     highlighted = highlight(text, DiffLexer(), TerminalFormatter())
     return Text.from_ansi(highlighted)

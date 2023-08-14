@@ -4,11 +4,12 @@ import logging
 import os
 import pathlib
 import sys
+from difflib import unified_diff
 
 import nbformat
 import rich_click as click
 
-from ._logging import VERBOSITY, handler, logger
+from ._logging import VERBOSITY, logger
 
 
 @click.command()
@@ -18,55 +19,22 @@ from ._logging import VERBOSITY, handler, logger
     "-v", "--verbose", count=True, help="Also emit status messages to stderr."
 )
 @click.option("-W", "--warning-is-error", is_flag=True, help="Treat warnings as errors")
-@click.option("--tags-to-hide", multiple=True, help="Hide cells with this tag.")
-@click.option("--file", help="Read files names from a file.", type=click.File("r"))
-@click.option(
-    "--solution-suffix",
-    default=".ipynb",
-    help=(
-        "Suffix of the solution notebook."
-        " The solution notebook is found by removing the problem"
-        " notebook's suffix and replacing it with suffix for the"
-        " solution. If the solution notebook can't be found or is"
-        " the same as the problem notebook, the notebook is skipped."
-    ),
-)
-@click.option(
-    "--check",
-    is_flag=True,
-    help=(
-        "Don't write the files back, just return the"
-        " status. Return code 0 means nothing would"
-        " change. Return code 1 means some files would"
-        " be reformatted. Return code 123 means there"
-        " was an internal error."
-    ),
-)
-@click.option(
-    "--diff",
-    is_flag=True,
-    help="Don't write the files back, just output a diff for each file on stdout.",
-)
-@click.argument("files", nargs=-1, type=click.Path())
-# @click.argument("files", nargs=-1, type=click.Path(exists=True))
-def hide_solution_cells(
+@click.option("--tags", multiple=True, help="Hide cells with this tag.")
+@click.option("--output-suffix", help="New suffix to use when writing output.")
+@click.argument("files", nargs=-1, type=click.Path(exists=True))
+def nb_hide_cells(
     silent,
     verbose,
     warning_is_error,
-    file,
-    tags_to_hide,
-    solution_suffix,
-    check,
-    diff,
+    tags,
+    output_suffix,
     files,
 ) -> None:
     logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
     if silent:
         logger.setLevel(logging.ERROR)
 
-    if file:
-        files += tuple(file.read().splitlines())
-    tags_to_hide = set(tags_to_hide)
+    tags_to_hide = set(tags)
 
     warning_is_error and logger.info("treating warnings as errors")
     files or logger.warning("no notebooks to check")
@@ -79,43 +47,29 @@ def hide_solution_cells(
 
     hide_cells = NotebookCellHider(tags_to_hide=tags_to_hide)
 
-    for filepath in [pathlib.Path(f) for f in files]:
-        path_to_solution = _replace_suffix(filepath, with_suffix=solution_suffix)
+    error_count = 0
+    for src_path in files:
+        logger.info(f"{src_path}")
 
-        if path_to_solution.is_file() and (
-            not filepath.is_file() or not path_to_solution.samefile(filepath)
-        ):
-            logger.info(
-                f"{filepath}\n"
-                f"solution-notebook: {path_to_solution}\n"
-                f"problem-notebook: {filepath}"
-            )
+        hidden_notebook = hide_cells(src_path)
 
-            hidden_notebook = hide_cells(path_to_solution)
+        hidden_notebook["metadata"]["kernelspec"] = {
+            "display_name": "CSDMS",
+            "language": "python",
+            "name": "csdms-2023",
+        }
+        hidden_notebook["metadata"].pop("celltoolbar", None)
 
-            if check or diff:
-                try:
-                    differences = NotebookCellHider.compare_notebooks(
-                        nbformat.read(filepath, as_version=4), hidden_notebook
-                    )
-                except FileNotFoundError:
-                    logger.error(
-                        f"{filepath}: file does not exist, so unable to run diff."
-                    )
-                else:
-                    if differences:
-                        logger.error(f"{filepath!s}: needs updating")
-                        diff and print("".join(differences))
-            else:
-                nbformat.write(hidden_notebook, filepath)
+        if output_suffix:
+            with open(_replace_suffix(src_path, with_suffix=output_suffix), "w") as fp:
+                nbformat.write(hidden_notebook, fp)
+        else:
+            nbformat.write(hidden_notebook, sys.stdout)
 
-    n_errors = handler.count["ERROR"] + (
-        handler.count["WARNING"] if warning_is_error else 0
-    )
+    if len(files) and not silent:
+        logger.info("❤️") if not error_count else logger.error("💔")
 
-    logger.info("❤️") if not n_errors else logger.error("💔")
-
-    sys.exit(n_errors)
+    sys.exit(error_count)
 
 
 def _replace_suffix(filepath, with_suffix=""):
@@ -124,13 +78,13 @@ def _replace_suffix(filepath, with_suffix=""):
 
 class NotebookCellHider:
     HIDDEN_CODE_CELL_FORMAT = """
-    <details>
-        <summary>👉 <b>click to see solution</b></summary>
+<details>
+    <summary>👉 <b>click to see solution</b></summary>
 
-    ```python
-    {source}
-    ```
-    </details>
+```python
+{source}
+```
+</details>
     """.strip()
 
     def __init__(self, tags_to_hide=None):
@@ -138,12 +92,9 @@ class NotebookCellHider:
 
     def __call__(self, filepath, outfile=None, check=False):
         nb = nbformat.read(filepath, as_version=4)
-        cells = NotebookCellHider._hide_cells(nb.cells, tags_to_hide=self._tags_to_hide)
-
-        # nbformat.write(nb, outfile)
+        NotebookCellHider._hide_cells(nb.cells, tags_to_hide=self._tags_to_hide)
 
         return nb
-        # return len(cells)
 
     @staticmethod
     def _hide_cells(cells, tags_to_hide=None):
@@ -168,9 +119,7 @@ class NotebookCellHider:
         return cell
 
     @staticmethod
-    def compare_notebooks(a, b):
-        from difflib import unified_diff
-
+    def compare_notebooks(a, b, **kwds):
         return list(
             unified_diff(
                 os.linesep.join([cell["source"] for cell in a.cells]).splitlines(
@@ -179,7 +128,6 @@ class NotebookCellHider:
                 os.linesep.join([cell["source"] for cell in b.cells]).splitlines(
                     keepends=True
                 ),
-                fromfile="before",
-                tofile="after",
+                **kwds,
             )
         )
