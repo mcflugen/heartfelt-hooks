@@ -39,6 +39,11 @@ bold = partial(Text, style="bold")
     is_flag=True,
     help="Print a diff for each file on stdout.",
 )
+@click.option(
+    "--fix",
+    is_flag=True,
+    help="Sync with the solution notebook.",
+)
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
 def nb_check_hidden_cells(
     silent,
@@ -46,6 +51,7 @@ def nb_check_hidden_cells(
     tags,
     solution_suffix,
     diff,
+    fix,
     files,
 ) -> None:
     logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
@@ -89,6 +95,8 @@ def nb_check_hidden_cells(
                 print(_highlight_diff("".join(differences)))
             else:
                 print(bold(f"{dst_path!s}"))
+            if fix:
+                nbformat.write(hidden_notebook, dst_path)
 
     if len(dst_src_paths) and not silent:
         logger.info("❤️") if not error_count else logger.error("💔")
