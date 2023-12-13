@@ -33,6 +33,7 @@ dependencies = [
   "nbformat",
   "rich",
   "rich_click",
+  "pyyaml",
 ]
 dynamic = ["readme", "version"]
 
@@ -46,13 +47,15 @@ dynamic = ["readme", "version"]
   dev = ["nox", "devtools"]
 
   [project.scripts]
-  check-whitespace = "heartfelt_hooks.check_whitespace:check_whitespace"
-  check-mixed-case = "heartfelt_hooks.check_mixed_case:check_mixed_case"
-  check-snake-case = "heartfelt_hooks.check_snake_case:check_snake_case"
-  check-heading-levels = "heartfelt_hooks.check_heading_levels:check_heading_levels"
-  list-headings = "heartfelt_hooks.list_headings:list_headings"
-  insert-toc = "heartfelt_hooks.list_headings:insert_toc"
-  hide-solution-cells = "heartfelt_hooks.hide_solution_cells:hide_solution_cells"
+  fn-check-whitespace = "heartfelt_hooks.check_whitespace:check_whitespace"
+  fn-check-mixed-case = "heartfelt_hooks.check_mixed_case:check_mixed_case"
+  fn-check-snake-case = "heartfelt_hooks.check_snake_case:check_snake_case"
+  nb-check-heading-levels = "heartfelt_hooks.check_heading_levels:check_heading_levels"
+  nb-list-headings = "heartfelt_hooks.list_headings:list_headings"
+  nb-insert-toc = "heartfelt_hooks.list_headings:insert_toc"
+  nb-check-hidden-cells = "heartfelt_hooks.check_hidden_notebooks:nb_check_hidden_cells"
+  nb-check-kernel = "heartfelt_hooks.check_kernel:nb_check_kernel"
+  nb-hide-cells = "heartfelt_hooks.hide_solution_cells:nb_hide_cells"
 
 [tool]
 

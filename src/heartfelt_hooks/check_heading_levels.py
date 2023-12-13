@@ -65,7 +65,7 @@ def check_heading_levels(
                 print(Text(log, style="bold"))
                 logger.warning(info)
 
-        error_count += validator.error_count
+            error_count += validator.error_count
 
     if error_count:
         logger.error("💔")
