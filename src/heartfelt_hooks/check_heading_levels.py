@@ -144,12 +144,10 @@ class NotebookHeadings:
 
 
 def _get_content(token):
-    try:
-        child = token.children[0]
-    except (AttributeError, IndexError):
-        return token.content
+    if hasattr(token, "children") and token.children:
+        return _get_content(token.children[0])
     else:
-        return _get_content(child)
+        return token.content
 
 
 class NotebookHeadingValidator:
