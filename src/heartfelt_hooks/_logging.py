@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import sys
+from collections import defaultdict
 from collections.abc import Generator
 
 from rich import print
@@ -23,7 +24,13 @@ MULTILINE_STYLE = "dim italic"
 
 
 class LoggingHandler(logging.Handler):
-    """Print rollcall log messages."""
+    """Print heartfelt-hooks log messages."""
+
+    count = defaultdict(int)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.count = defaultdict(int)
 
     def emit(self, record: logging.LogRecord) -> None:
         """Print a log message.
@@ -33,6 +40,8 @@ class LoggingHandler(logging.Handler):
         record : LogRecord
             The log to print.
         """
+        self.count[record.levelname] += 1
+
         level_msg = Text(
             f"[{record.levelname}]", style=LOG_LEVEL_STYLES[record.levelname]
         )
@@ -63,5 +72,6 @@ def logging_handler() -> Generator[None, None, None]:
         logger.removeHandler(handler)
 
 
+handler = LoggingHandler()
 logger = logging.getLogger("heartfelt-hooks")
-logger.addHandler(LoggingHandler())
+logger.addHandler(handler)
