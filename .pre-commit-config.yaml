@@ -68,15 +68,6 @@ repos:
     - numpy
     - cython
 
-- repo: https://github.com/mgedmin/check-manifest
-  rev: "0.50"
-  hooks:
-  - id: check-manifest
-    args: ["--ignore=.nox,build", "--no-build-isolation"]
-    additional_dependencies:
-    - numpy
-    - cython
-
 # - repo: https://github.com/PyCQA/pydocstyle
 #   rev: 6.1.1
 #   hooks:
