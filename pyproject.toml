@@ -64,14 +64,14 @@ dynamic = ["readme", "version"]
   minversion = "6.0"
   testpaths = ["src", "tests"]
   norecursedirs = [".*", "*.egg*", "build", "dist"]
-  addopts = """
-    --ignore setup.py
-    --tb native
-    --durations 16
-    --strict-markers
-    --doctest-modules
-    -vvv
-  """
+  addopts = [
+    "--ignore=setup.py",
+    "--tb=native",
+    "--durations=16",
+    "--strict-markers",
+    "--doctest-modules",
+    "-vvv",
+  ]
   doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
     "IGNORE_EXCEPTION_DETAIL",
