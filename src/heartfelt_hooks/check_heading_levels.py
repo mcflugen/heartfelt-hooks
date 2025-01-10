@@ -35,9 +35,15 @@ from heartfelt_hooks._logging import logger
 @click.option(
     "--check-dedent/--no-check-dedent", default=True, help="Check for dedent errors"
 )
+@click.option(
+    "--check-first/--no-check-first", default=True, help="Check first heading"
+)
+@click.option(
+    "--check-level-one/--no-check-level-one", default=True, help="Check level one heading"
+)
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
 def check_heading_levels(
-    silent, verbose, file, files, check_indent, check_dedent
+    silent, verbose, file, files, check_indent, check_dedent, check_first, check_level_one
 ) -> None:
     logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
     if silent:
@@ -51,6 +57,10 @@ def check_heading_levels(
         validators.append(IndentValidator)
     if check_dedent:
         validators.append(DedentValidator)
+    if check_first:
+        validators.append(StartsWithLevelOneValidator)
+    if check_level_one:
+        validators.append(OneAndOnlyOneLevelOneValidator)
 
     if not validators:
         sys.exit(0)
@@ -216,6 +226,56 @@ class NotebookHeadingValidator:
             headings.append(Heading(level=heading.level, text=heading.content))
 
         return headings
+
+
+class OneAndOnlyOneLevelOneValidator(NotebookHeadingValidator):
+    def validate(self):
+        errors = []
+        level_one = [
+            (cell, heading) for cell, heading in self._headings if heading.level == 1
+        ]
+        if len(level_one) != 1:
+            errors += level_one
+        self._errors = errors
+        return len(errors)
+
+    def log(self):
+        entries = []
+
+        for cell, heading in self._errors:
+            parts = [
+                f"{self._filepath!s}",
+                f"level={heading.level}(cell={cell})",
+            ]
+            entries.append(":".join(parts))
+        return entries
+
+        return entries
+
+    def info(self):
+        entries = []
+
+        for cell, heading in self._errors:
+            parts = [
+                f"{self._filepath!s}",
+                f"{cell}: #{'#' * heading.level} {heading.text}",
+            ]
+            entries.append(os.linesep.join(parts))
+
+        return entries
+
+
+class StartsWithLevelOneValidator(OneAndOnlyOneLevelOneValidator):
+    def validate(self):
+        errors = []
+
+        if self._headings:
+            cell, heading = self._headings[0]
+            if heading.level != 1:
+                errors.append((cell, heading))
+
+        self._errors = errors
+        return len(errors)
 
 
 class IndentValidator(NotebookHeadingValidator):
