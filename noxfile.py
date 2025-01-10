@@ -9,10 +9,10 @@ ROOT = pathlib.Path(__file__).parent
 @nox.session
 def test(session: nox.Session) -> None:
     """Run the tests."""
-    session.install("-r", "requirements-testing.txt")
+    session.install("pytest")
     session.install(".")
 
-    args = ["-n", "auto", "-vvv"] + session.posargs
+    args = ["-vvv"] + session.posargs
 
     session.run("pytest", *args)
 
