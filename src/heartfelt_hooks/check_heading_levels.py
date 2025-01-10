@@ -13,7 +13,8 @@ import rich_click as click
 from rich import print
 from rich.text import Text
 
-from ._logging import VERBOSITY, logger
+from heartfelt_hooks._logging import VERBOSITY
+from heartfelt_hooks._logging import logger
 
 
 @click.command()
