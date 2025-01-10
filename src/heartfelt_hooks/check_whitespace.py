@@ -49,8 +49,8 @@ def check_whitespace(silent, verbose, file, files) -> None:
     summary = os.linesep.join(
         [
             "Summary:",
-            f"checked {len(files)} filename{'s' if len(files)!=1 else ''}",
-            f"found {error_count} bad filename{'s' if error_count!=1 else ''}",
+            f"checked {len(files)} filename{'s' if len(files) != 1 else ''}",
+            f"found {error_count} bad filename{'s' if error_count != 1 else ''}",
         ]
     )
 
