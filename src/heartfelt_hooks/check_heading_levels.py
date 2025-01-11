@@ -39,11 +39,20 @@ from heartfelt_hooks._logging import logger
     "--check-first/--no-check-first", default=True, help="Check first heading"
 )
 @click.option(
-    "--check-level-one/--no-check-level-one", default=True, help="Check level one heading"
+    "--check-level-one/--no-check-level-one",
+    default=True,
+    help="Check level one heading",
 )
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
 def check_heading_levels(
-    silent, verbose, file, files, check_indent, check_dedent, check_first, check_level_one
+    silent,
+    verbose,
+    file,
+    files,
+    check_indent,
+    check_dedent,
+    check_first,
+    check_level_one,
 ) -> None:
     logger.setLevel(VERBOSITY.get(verbose, logging.DEBUG))
     if silent:
