@@ -78,14 +78,13 @@ def check_heading_levels(
     for filepath in (Path(f) for f in files):
         logger.info(f"checking: {filepath}")
 
-        for validator in (cls(filepath) for cls in validators):
-            validator.validate()
+        errors = validate_filepath(filepath, validators=validators)
 
-            for log, info in zip(validator.log(), validator.info()):
-                print(Text(log, style="bold"))
-                logger.warning(info)
+        for log, info in errors:
+            print(Text(log, style="bold"))
+            logger.warning(info)
 
-        error_count += validator.error_count
+        error_count += len(errors)
 
     if error_count:
         logger.error("💔")
@@ -93,6 +92,17 @@ def check_heading_levels(
         logger.info("❤️")
 
     sys.exit(error_count)
+
+
+def validate_filepath(filepath, validators=()):
+    errors = ([], [])
+
+    for validator in (cls(filepath) for cls in validators):
+        validator.validate()
+        errors[0] += validator.log()
+        errors[1] += validator.info()
+
+    return tuple(zip(errors))
 
 
 @dataclass
