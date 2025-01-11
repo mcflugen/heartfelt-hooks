@@ -7,7 +7,8 @@ import sys
 import nbformat
 import rich_click as click
 
-from ._logging import VERBOSITY, logger
+from heartfelt_hooks._logging import VERBOSITY
+from heartfelt_hooks._logging import logger
 
 HIDDEN_CODE_CELL_FORMAT = """
 <details>

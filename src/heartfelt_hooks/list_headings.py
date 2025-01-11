@@ -9,8 +9,9 @@ import nbformat
 import rich_click as click
 from rich import print
 
-from ._logging import VERBOSITY, logger
-from .check_heading_levels import NotebookHeadings
+from heartfelt_hooks._logging import VERBOSITY
+from heartfelt_hooks._logging import logger
+from heartfelt_hooks.check_heading_levels import NotebookHeadings
 
 
 class MissingTOCError(Exception):
