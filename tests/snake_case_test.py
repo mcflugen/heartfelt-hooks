@@ -1,8 +1,8 @@
 import pytest
 
 from heartfelt_hooks.check_snake_case import _is_sausage
-from heartfelt_hooks.check_snake_case import _is_snake
 from heartfelt_hooks.check_snake_case import _is_sausage_snake
+from heartfelt_hooks.check_snake_case import _is_snake
 
 
 @pytest.mark.parametrize("name", ("-foo", "foo-bar", "f-o-o"))
