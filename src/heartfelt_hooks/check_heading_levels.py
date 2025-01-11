@@ -111,7 +111,7 @@ class NotebookHeadings:
         toc = []
         for level, text in self:
             toc.append(
-                f"{'  '*(level - min_level)}* [{text}](#{text.replace(' ', '-')})"
+                f"{'  ' * (level - min_level)}* [{text}](#{text.replace(' ', '-')})"
             )
         return os.linesep.join(toc)
 
@@ -196,13 +196,12 @@ class NotebookHeadingValidator:
     def _extract_headings(nb):
         headings = []
         for count, cell in enumerate(nb.cells):
-            if cell["cell_type"] == "markdown":
-                headings += [
-                    (count, heading)
-                    for heading in NotebookHeadingValidator._extract_headings_from_source(
-                        cell["source"]
-                    )
-                ]
+            headings_in_cell = (
+                NotebookHeadingValidator._extract_headings_from_source(cell["source"])
+                if cell["cell_type"] == "markdown"
+                else []
+            )
+            headings += [(count, heading) for heading in headings_in_cell]
 
         return headings
 
