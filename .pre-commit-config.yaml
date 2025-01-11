@@ -59,15 +59,6 @@ repos:
     - id: mixed-line-ending
     - id: trailing-whitespace
 
-- repo: https://github.com/regebro/pyroma
-  rev: "4.2"
-  hooks:
-  - id: pyroma
-    args: ["-d", "--min=10", "."]
-    additional_dependencies:
-    - numpy
-    - cython
-
 # - repo: https://github.com/PyCQA/pydocstyle
 #   rev: 6.1.1
 #   hooks:
