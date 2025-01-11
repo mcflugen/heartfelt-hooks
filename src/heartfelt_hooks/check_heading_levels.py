@@ -71,9 +71,6 @@ def check_heading_levels(
     if check_level_one:
         validators.append(OneAndOnlyOneLevelOneValidator)
 
-    if not validators:
-        sys.exit(0)
-
     error_count = 0
     for filepath in (Path(f) for f in files):
         logger.info(f"checking: {filepath}")
