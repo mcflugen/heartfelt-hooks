@@ -32,4 +32,4 @@ jobs:
       - name: Smoke test
         run: |
           pip install nox
-          nox -s test-cli
+          nox -s test-cli test

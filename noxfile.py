@@ -1,4 +1,3 @@
-import os
 import pathlib
 import shutil
 
@@ -10,23 +9,12 @@ ROOT = pathlib.Path(__file__).parent
 @nox.session
 def test(session: nox.Session) -> None:
     """Run the tests."""
-    session.install("-r", "requirements-testing.txt")
+    session.install("pytest")
     session.install(".")
 
-    args = [
-        "-n",
-        "auto",
-        "--cov",
-        "check_filenames",
-        "-vvv",
-    ] + session.posargs
+    args = ["-vvv"] + session.posargs
 
-    if "CI" in os.environ:
-        args.append(f"--cov-report=xml:{ROOT.absolute()!s}/coverage.xml")
     session.run("pytest", *args)
-
-    if "CI" not in os.environ:
-        session.run("coverage", "report", "--ignore-errors", "--show-missing")
 
 
 @nox.session(name="test-cli")
